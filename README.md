@@ -1,1 +1,2 @@
 # morpion
+caseCheck
