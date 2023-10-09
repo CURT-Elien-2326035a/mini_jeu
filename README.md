@@ -12,9 +12,19 @@ Partie 1 – Le jeu :
 - Fonction "Lancer le jeu / Redémarrer le jeu" 
 - Fonction "Placer sa forme"
 - Fonction "Vérifier que la case est vide"
-- Fonction "Victoire"
+- Fonction "Victoire ligne"
+- Fonction "Victoire colonne"
+- Fonction "Victoire diagonale"
 - Fonction "Egalité"
 
 
 Coline :
 - 
+Baptiste :
+-
+Hugo :
+-
+Elien :
+-
+Maxime :
+-
