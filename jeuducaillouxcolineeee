@@ -69,7 +69,6 @@ int main()
 
 
 probleme, 2 manches apparaissent jsp comment , probleme dans les victoires, il faut faire 4 condition distincte.
-
 #include <iostream>
 #include <vector>
 
@@ -81,27 +80,18 @@ string Stoneplay (const vector<string> & player1, const vector<string> & player2
     int result1 (3) ;
     int result2 (3) ;
     string winner ("Le gagnant est ") ;
+    cout << size(player1) << endl ;
     while (true)
     {
-        if (size(player1) < count)
-        {
-            cout << "pas assez d'essai" ;
-            if (result1 < result2)
-            {
 
-                winner += player2[0] ;
-                break ;
-            }
-            winner += player1[0] ;
-            break ;
-        }
-        else if ((player1[count+1] == player2[count+1] && (count % 2) == 0) || (player1[count+1] != player2[count+1] && (count % 2) == 1))
+        if ((player1[count+1] == player2[count+1] && (count % 2) == 0) || (player1[count+1] != player2[count+1] && (count % 2) == 1))
         {
             result2 += 1 ;
             result1 -= 1 ;
             cout << player2[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl ;
             count += 1 ;
+            cout << "le compteur est " << count << endl ;
             if (result1 <= 0)
             {
                 winner += player2[0] ;
@@ -115,11 +105,24 @@ string Stoneplay (const vector<string> & player1, const vector<string> & player2
             count += 1 ;
             cout << player1[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl ;
+            cout << "le compteur est " << count << endl ;
             if (result1 <= 0)
             {
                 winner += player1[0] ;
                 break ;
             }
+        }
+        if (size(player1) < count+2)
+        {
+            cout << "Pas assez d'essais" << endl ;
+            if (result1 < result2)
+            {
+
+                winner += player2[0] ;
+                break ;
+            }
+            winner += player1[0] ;
+            break ;
         }
     }
     return winner ;
@@ -128,6 +131,6 @@ string Stoneplay (const vector<string> & player1, const vector<string> & player2
 int main()
 {
     cout << "Hello World!" << endl;
-    cout << Stoneplay ({"Coline", "2", "1", "3"}, {"Sarah", "1", "3", "2"})  << endl ;
+    cout << Stoneplay ({"Coline", "2", "1", "3","2"}, {"Sarah", "1", "3", "2","3"})  << endl ;
 }
 
