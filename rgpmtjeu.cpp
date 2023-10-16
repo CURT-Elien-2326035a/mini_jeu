@@ -39,7 +39,7 @@ void shifoumi(){
     string player1status;
     string player2status;
 
-    cout << "rentrer no du joueur 1: ";
+    cout << "rentrer nom du joueur 1: ";
     cin >> player1;
     cout << "rentrer nom du joueur 2: ";
     cin >> player2;
