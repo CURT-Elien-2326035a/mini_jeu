@@ -63,7 +63,12 @@ string Stoneplay (const vector<string> & player1, const vector<string> & player2
             cout << player1[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl << endl ;
         }
-        if (result1 < 1 || result2 < 1)
+        if (result1 < 1 )
+        {
+            winner += player2[0] ;
+            return winner ;
+        }
+        else if (result2 < 1)
         {
             winner += player1[0] ;
             return winner ;
@@ -87,6 +92,5 @@ string Stoneplay (const vector<string> & player1, const vector<string> & player2
 int main()
 {
     cout << "Hello World!" << endl << endl ;
-    cout << Stoneplay ({"Coline", "1", "3","2","3"}, {"Marie", "1","3","1","3"})  << endl ;
+    cout << Stoneplay ({"Coline", "1", "3", "2", "1"}, {"Baba", "2", "1","2", "2"})  << endl ;
 }
-
