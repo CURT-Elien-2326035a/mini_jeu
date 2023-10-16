@@ -132,6 +132,8 @@ int main()
 }
 
 
+cd "/amuhome/a23005604/build-sae101cailloux-Desktop_Qt_6_3_0_GCC_64bit-Debug"
+./sae101cailloux < ../Bureau/nom
 
 
 
