@@ -1,0 +1,145 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+
+using namespace std;
+
+vector<vector<string>> grid{{" ", " ", " "},{" ", " ", " "},{" ", " ", " "}};
+vector<vector<string>> exampleGrid{{"0", "1", "2"},{"3", "4", "5"},{"6", "7", "8"}};
+
+struct player{
+    string name;
+    vector<int> move;
+};
+
+//Show grid
+void showGrid(const vector<vector<string>> & grid){
+    for(int line = 0; line < 3; line += 1){
+        for(int column = 0; column < 3; column += 1){
+            cout << grid[line][column];
+            if(column < 2){
+                cout << "|";
+            }
+        }
+        cout << endl;
+        if(line < 2){
+            cout << "------" << endl;
+        }
+    }
+    for(int i = 0; i < 4; i += 1){
+        cout << endl;
+    }
+}
+
+//Place form
+bool isPlayable(const int & line, const int & column, vector<vector<string>> grid){
+    if(grid[line][column] == " "){
+        return true;
+    }
+    return false;
+}
+
+//Check If player "form" Win
+bool isWinner(const string & form, vector<vector<string>> grid){
+    //Check Line
+    for(int line = 0; line < 3; line += 1){
+        if(grid[line][0] == form && grid[line][1] == form && grid[line][2] == form){
+            return true;
+        }
+    }
+    //Check Column
+    for(int column = 0; column < 3; column += 1){
+        if(grid[0][column] == form && grid[1][column] == form && grid[2][column] == form){
+            return true;
+        }
+    }
+    //Check Diagonal
+    if(grid[0][0] == form && grid[1][1] == form && grid[2][2] == form){
+        return true;
+    }
+    //Check OppositeDiagonal
+    if(grid[0][2] == form && grid[1][1] == form && grid[2][0] == form){
+        return true;
+    }
+
+    return false;
+}
+
+vector<int> select_emp(int x){
+    vector<int> result{0,0};
+    int count = 0;
+    for(int i = 0; i < 3; i += 1){
+        for(int j = 0; j < 3; j += 1){
+            if(count == x){
+                result[0] = i;
+                result[1] = j;
+                return result;
+            }
+            count += 1;
+        }
+    }
+    return result;
+}
+
+void clearConsole(){
+    system("clear");
+}
+
+//Main Game
+void TicTacToeGame(vector<vector<string>> grid, vector<vector<string>> exampleGrid, vector<player> pls){
+    int count = 0;
+    int round = -1;
+    int selection = 0;
+    int line = 0;
+    int column = 0;
+    string form;
+    while(true){
+        if(count%2 == 0){
+            form = "X";
+            round += 1;
+        }else{
+            form = "O";
+        }
+        showGrid(exampleGrid);
+        showGrid(grid);
+        //cout << "Joueur " << form << " c'est a vous de jouez : ";
+        //cin >> selection;
+        selection = pls[count%2].move[round];
+        line = select_emp(selection)[0];
+        column = select_emp(selection)[1];
+        if(isPlayable(line, column, grid)){
+            count += 1;
+            grid[line][column] = form;
+            //clearConsole();
+        }else{
+            //clearConsole();
+        }
+        if(isWinner(form, grid)){
+            //clearConsole();
+            cout << "Le joueur " << pls[count%2].name << " à gagné !" << endl;
+            return;
+        }
+        if(count == 9){
+            //clearConsole();
+            cout << "Match nul !" << endl;
+            return;
+        }
+    }
+}
+
+int main(){
+
+    player joueur1;
+    player joueur2;
+
+    joueur1.name = "Baptiste";
+    joueur2.name = "Hugo";
+
+    joueur1.move = {0,2,8,3,6};
+    joueur2.move = {4,1,7,5};
+
+    vector<player> pls{joueur1, joueur2};
+
+    TicTacToeGame(grid, exampleGrid, pls);
+    return 0;
+}
