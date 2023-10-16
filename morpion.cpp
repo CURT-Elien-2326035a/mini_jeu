@@ -1,87 +1,94 @@
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 using namespace std;
 
-vector<vector<string>> board{{"*","*","*"}, {"*","6","*"}, {"*","*","*"}};
-vector<vector<string>> exampleBoard{{"0","1","2"}, {"3","4","5"}, {"6","7","8"}};
+vector<vector<string>> grid{{" ", " ", " "},{" ", " ", " "},{" ", " ", " "}};
 
-struct playerType{
-    string name;
-    char playerform;
-};
-
-vector<playerType> playerList;
-
-void initPlayer(){
-    playerType playerOne;
-    playerType playerTwo;
-
-    playerOne.name = "Joueur1";
-    playerTwo.name = "Joueur2";
-}
-
-
-void start(){
-    //Boucle du jeu.
-    while(true){
-
+//Show grid
+void showGrid(const vector<vector<string>> & grid){
+    for(int line = 0; line < 3; line += 1){
+        for(int column = 0; column < 3; column += 1){
+            cout << grid[line][column];
+            if(column < 2){
+                cout << "|";
+            }
+        }
+        cout << endl;
+        if(line < 2){
+            cout << "------" << endl;
+        }
     }
 }
 
-string showLine(vector<string> line){
-    return line[0] + "|" + line[1] + "|" + line[2];
-}
-
-void showBoard(vector<vector<string>> bo, string title){
-    cout << endl;
-    cout << title << endl;
-    cout << endl;
-    int boardSize = size(bo);
-    for(int i = 0; i < boardSize; i += 1){
-        cout << showLine(bo[i]) << endl;
-    }
-    cout << endl;
-}
-
-bool isEmpty(string bo){
-    if(bo != ""){
+//Place form
+bool play(const string & form, const int & line, const int & column, vector<vector<string>> grid){
+    if(grid[line][column] == " "){
+        grid[line][column] = form;
         return true;
     }
     return false;
 }
 
-string select_emp(const int & num, const vector<vector<string>> & bo){
-    int size_tab = size(bo);
-    int count = 0;
-    for(int i = 0; i < size_tab; i += 1){
-        for(int j = 0; j < 3; j += 1){
-            if(count == num){
-                if(isEmpty(bo[i][j])){
-                    //Place la pièce
-                }else{
-                    //Erreur, rejoue.
-                }
-            }
-            count += 1;
+//Check If player "form" Win
+bool isWinner(const string & form, vector<vector<string>> grid){
+    //Check Line
+    for(int line = 0; line < 3; line += 1){
+        if(grid[line][0] == form && grid[line][1] == form && grid[line][2] == form){
+            return true;
         }
     }
-    return "erreur";
+    //Check Column
+    for(int column = 0; column < 3; column += 1){
+        if(grid[0][column] == form && grid[1][column] == form && grid[2][column] == form){
+            return true;
+        }
+    }
+    //Check Diagonal
+    if(grid[0][0] == form && grid[1][1] == form && grid[2][2] == form){
+        return true;
+    }
+    //Check OppositeDiagonal
+    if(grid[0][2] == form && grid[1][1] == form && grid[2][0] == form){
+        return true;
+    }
+
+    return false;
 }
 
-void playerPlaceForm(const vector<vector<string>> & bo){
-    int typing;
-    cout << "Choisissez un emplacement : ";
-    cin >> typing;
-    cout << endl;
-    cout << select_emp(typing, bo) << endl;
+tuple<int,int> select_emp(int x){
+    int count = 0;
+    for(int i = 0; i < 3; i += 1){
+        for(int j = 0; j < 3; j += 1){
+            if(count == x){
+                tuple<int, int> result;
+                result = make_tuple(i, j);
+                return result;
+            }
+        }
+    }
+    //AYA
+    return;
 }
 
-int main(){
-    //cout << board[0][0] << endl;
-    //showBoard(exampleBoard, "Exemple des Emplacements");
-    //showBoard(board, "board test");
-    //playerPlaceForm(board);
+//Main Game
+void TicTacToeGame(vector<vector<string>> grid){
+    int count = 0;
+    string form;
+    while(true){
+        if(count%2 == 0){
+            form = "X";
+        }else{
+            form = "O";
+        }
+        showGrid(grid);
+
+    }
+}
+
+int main()
+{
+    showGrid(grid);
     return 0;
 }
-
