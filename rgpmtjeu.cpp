@@ -23,11 +23,14 @@ void pileOuFace(){
     string player2;
     string player1status;
     cout << "rentrer no du joueur 1: ";
-    cin >> player1;
-    cout << "rentrer nom du joueur 2: ";
-    cin >> player2;
-    cout << "joeur 1 rentrer face de la pièce: pile ou face: ";
-            cin >> player1status;
+   player1 = "baba";
+cout << "le premier jouer c'est : " << player1;
+cout << endl << endl;
+player2 = "hugo";
+cout << "le deuxième joueur c'est : " << player2;
+cout << endl << endl;
+cout << "joueur 1 rentrer face de la pièce: pile ou face: ";
+player1status = "face";
     if (player1status == "pile"){
         piece=true;
     }
@@ -51,17 +54,15 @@ void shifoumi(string player1, string player2, string player1status, string playe
     int paper2;
     int cisor2;
     
-/*
-    cout << "rentrer no du joueur 1: ";
-    cin >> player1;
-    cout << "rentrer nom du joueur 2: ";
-    cin >> player2;
-    cout << "joeur 1 rentrer face de la pièce: pierre, feuille ou ciseaux: ";
-            cin >> player1status;
-    system("clear");
-    cout << "joeur 2 rentrer face de la pièce: pierre, feuille ou ciseaux: ";
-            cin >> player2status;
-*/
+player1 = "baba";
+cout << "le nom du joueur 1 est :" << player1;
+cout << endl << endl;
+player2 = "coline";
+cout << "le nom du joueur 2 est :" << player2;
+cout << endl << endl;
+player1status = "feuille";
+player2status = "pierre";
+    
     if(player1status == "pierre"){
         rock = true;
         paper = false;
