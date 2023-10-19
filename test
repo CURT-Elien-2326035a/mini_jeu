@@ -1,12 +1,43 @@
-# Le jeu du cailloux (ordniateur contre ordinateur)
+
+#include <iostream>
+
+using namespace std;
+
+string litUneString (){
+    string uneChaine;
+    while (true){
+        getline (cin, uneChaine);
+        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
+    }
+    return uneChaine;
+}
+
+int litUnEntier (){
+    string uneChaine;
+    while (true){
+        getline (cin, uneChaine);
+        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
+    }
+    return stoi(uneChaine);
+}
+
+int main()
+{
+    for (unsigned i (0); i < 114; ++i){
+        string nom (litUneString());
+        string prenom  (litUneString());
+        int numEquipe (litUnEntier());
+        cout << nom << endl << prenom << endl << numEquipe << endl;
+    }
+
+    return 0;
+}
 
 
-### Le principe du jeu :
-Les deux joueurs ont chacun 3 cailloux. Le but du jeu est de récupérer tous ceux de son adversaire. Un odinateur commence et cache dans sa main 1, 2 ou 3 cailloux. Chacun son tour, on essaye de deviner le nombre de cailloux dans la main de l’autre 
-joueur. Si le joueur trouve le nombre de cailloux, il les récupère. Sinon il doit donner le même nombre de ses cailloux à son adversiare.
+cd "/amuhome/a23005604/build-sae101cailloux-Desktop_Qt_6_3_0_GCC_64bit-Debug"
+./sae101cailloux < ../Bureau/nom
 
-Les fonctions :
-Comme les essais de chaque joueurs sont déja connu, on a juste besoin de faire une fonction qui prendra leur essai en paramètre et qui renverra qui gagne à la fin du tour.
+------------------------------------------------------------------------------
 
 #include <iostream>
 
