@@ -1,0 +1,79 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+string litUneString (){
+    string uneChaine;
+    while (true){
+        getline (cin, uneChaine);
+        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
+    }
+    return uneChaine;
+}
+
+int litUnEntier (){
+    string uneChaine;
+    while (true){
+        getline (cin, uneChaine);
+        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
+    }
+    return stoi(uneChaine);
+}
+
+struct joueur {
+    string nom;
+    string prenom;
+    unsigned numEquipe;
+};
+
+void affichTabJoueur (const vector<vector<joueur>> & vJ){
+    //    for (const auto & equipe  : vector<vector<joueur>>){
+    for (size_t i (0); i < vJ.size(); ++i) {
+        cout << "numero equipe : " << i << endl;
+        for (const auto & _joueur  : vJ[i])
+                cout << _joueur.nom << " " << _joueur.prenom << endl;
+    }
+}
+
+size_t equipeGagnante (const vector<vector<joueur>> & vJoueur, const size_t & posEquipe1, const
+                       size_t & posEquipe2){
+    return posEquipe2;
+}
+
+size_t tournoi (vector<vector<joueur>> & vJoueur){
+    if (vJoueur.size() > 16) vJoueur.resize(16);
+    cout << vJoueur[0][0].numEquipe << endl;
+    while (vJoueur.size()> 1){
+ //       cout << "on dÃ©bute le round "  << endl;
+ //       cout << "on a " << vJoueur.size() << "participants" << endl;
+        vector<vector<joueur>> prochainRoundVJouer;
+        for (size_t i (0); i < vJoueur.size(); i+=2){
+            prochainRoundVJouer.push_back(
+                        vJoueur[
+                        equipeGagnante(vJoueur, i , i+1)]);
+        }
+        vJoueur = prochainRoundVJouer;
+ //       cout << "plop1 " << endl;
+    }
+ //   cout << "plop2" << endl;
+    cout << vJoueur[0][0].numEquipe << endl;
+    return size_t(vJoueur[0][0].numEquipe);
+}
+
+int main()
+{
+    cout << "Hello World!" << endl;
+    vector<vector<joueur>> vJoueur (19);
+
+    for (unsigned i (0); i < 114; ++i){
+        string nom (litUneString());
+        string prenom  (litUneString());
+        unsigned numEquipe (litUnEntier());
+        //cout << nom << endl << prenom << endl << numEquipe << endl;
+        vJoueur[numEquipe-1].push_back(joueur {nom, prenom, numEquipe-1});
+    }
+   // affichTabJoueur (vJoueur);
+    tournoi (vJoueur);
+    return 0;
+}
