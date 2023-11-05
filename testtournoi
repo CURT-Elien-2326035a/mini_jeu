@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+// Utiliser l'espace de noms std pour éviter de répéter std::
+using namespace std;
+
+// Structure pour représenter un joueur
+struct Player {
+    string name;
+};
+
+// Fonction pour simuler un match entre deux joueurs
+void playMatch(const Player& player1, const Player& player2) {
+    // Afficher les noms des joueurs en compétition
+    cout << player1.name << " vs " << player2.name << ": ";
+
+    // Simuler le lancer de pile ou face
+    bool result = rand() % 2 == 0;
+
+    // Afficher le résultat du match
+    if (result) {
+        cout << player1.name << " gagne!" << endl;
+    } else {
+        cout << player2.name << " gagne!" << endl;
+    }
+}
+
+// Fonction pour simuler un tournoi de type "ligue 1"
+void simulateTournament(const vector<Player>& players) {
+    // Double boucle pour faire en sorte que chaque joueur affronte tous les autres une fois
+    for (size_t i = 0; i < players.size(); ++i) {
+        for (size_t j = i + 1; j < players.size(); ++j) {
+            // Appeler la fonction playMatch pour simuler le match entre deux joueurs
+            playMatch(players[i], players[j]);
+        }
+    }
+}
+
+// Fonction principale
+int main() {
+    // Initialiser le générateur de nombres aléatoires
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    // Créer un vecteur de joueurs et initialiser avec les noms des joueurs
+    vector<Player> players = {{"Joueur1"}, {"Joueur2"}, {"Joueur3"}};
+    // Ajouter autant de joueurs que nécessaire
+
+    // Simuler le tournoi en utilisant la fonction simulateTournament
+    simulateTournament(players);
+
+    // Indiquer la fin du programme
+    return 0;
+}
