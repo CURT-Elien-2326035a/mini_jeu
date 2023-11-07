@@ -11,7 +11,12 @@ using namespace std;
 
 // ------------ pileOuFace -----------
 string pileOuFace (const vector<string> & player1, const vector<string> & player2){
-    if (player1[1] == "pile") return player1[0];
+    if (player1[1] == "pile")
+    {
+        cout << "Le gagnant est " << player1[0] << endl;
+        return player1[0];
+    }
+    cout << "Le gagnant est " << player2[0] << endl;
     return player2[0];
 }
 
@@ -112,48 +117,62 @@ string jeuDuCailloux (const vector<string> & player1, const vector<string> & pla
     return winner ;
 }
 
+
 // -----------------------------------------------------------------------------
 // ----------------------- Tournoi -----------------------
 // -----------------------------------------------------------------------------
-
-struct Match {
-    string equipe1;
-    string equipe2;
-    int scoreEquipe1;
-    int scoreEquipe2;
-};
-
-void afficherResultat(const Match & match) {
-    cout << match.equipe1 << " " << match.scoreEquipe1 << " - " << match.scoreEquipe2 << " " << match.equipe2 << endl;
-}
-
-// ------------ tournoiSuisse -----------
-void tournoiSuisse (const vector<string> & equipes){
-    vector<Match> matchs;
-    for (size_t i = 0; i < equipes.size(); i = i + 1) {
-        for (size_t j = i + 1; j < equipes.size(); j = j + 1) {
-            Match match;
-            match.equipe1 = equipes[i];
-            match.equipe2 = equipes[j];
-
-            match.scoreEquipe1 = 1;
-            match.scoreEquipe2 = 2;
-            matchs.push_back(match);
+void jouerMatchPile(vector<pair<string, int>> & points, const string & team1, const string & team2) {
+    cout << team1 << " vs " << team2 << ": ";
+    string gagnant = pileOuFace({team1, "face"}, {team2, "pile"});
+    for (auto & equipe : points) {
+        if (equipe.first == gagnant) {
+            equipe.second = equipe.second + 1;
+            break;
         }
     }
-    for (const Match & match : matchs) {
-        afficherResultat(match);
-    }
 }
 
+void afficherPoints(const vector<pair<string, int>> & points) {
+    string gagnant = points[0].first;
+    int meilleurScore = points[0].second;
+    cout << "Les points de chaque equipe sont :" << endl;
+    for (size_t i = 0; i < points.size(); i=i+1) {
+        if (points[i].second > meilleurScore) {
+            gagnant = points[i].first;
+            meilleurScore = points[i].second;
+        }
+        cout << points[i].first << " : " << points[i].second << " points" << endl;
+    }
+    cout << "Le gagnant du tournoi est : " << gagnant << endl;
+}
+
+
+// ------------ tournoiLigue1 -----------
+
+void tournoiLigue1(const vector<string> & teams) {
+    vector<pair<string, int>> points;
+
+    for (const auto & equipe : teams) {
+        points.emplace_back(equipe, 0);
+    }
+
+    for (size_t i = 0; i < teams.size(); i=i+1) {
+        for (size_t j = i + 1; j < teams.size(); j=j+1) {
+            jouerMatchPile(points, teams[i], teams[j]);
+        }
+    }
+    afficherPoints(points);
+
+}
 
 int main() {
     vector<string> equipes = {"Equipe1", "Equipe2", "Equipe3", "Equipe4"};
-    tournoiSuisse (equipes);
+    tournoiLigue1 (equipes);
+
     /* test jeux
-    cout << pileOuFace({"Coline","face"}, {"Marie", "pile"})  << endl ;
-    cout << shifoumi({"Coline","1", "2"}, {"Marie", "1", "1"})  << endl ;
-    cout << justePrix({"Coline","70", "67"}, {"Marie", "60", "66"})  << endl ;
-    cout << jeuDuCailloux({"Coline","2", "3", "3"}, {"Marie", "2", "3", "1"})  << endl ;*/
+    cout << pileOuFace({"Coline","face"}, {"Marie", "pile"})  << endl;
+    cout << shifoumi({"Coline","1", "2"}, {"Marie", "1", "1"})  << endl;
+    cout << justePrix({"Coline","70", "67"}, {"Marie", "60", "66"})  << endl;
+    cout << jeuDuCailloux({"Coline","2", "3", "3"}, {"Marie", "2", "3", "1"})  << endl;*/
     return 0;
 }
