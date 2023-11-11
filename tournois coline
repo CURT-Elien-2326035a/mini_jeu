@@ -1,5 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <ostream>
+#include <tuple>
+
 
 using namespace std;
 
@@ -8,23 +14,32 @@ using namespace std;
 // ----------------------- Récupération des donneés -----------------------
 // -----------------------------------------------------------------------------
 
+struct joueur {
+    string nom;
+    string prenom;
+    unsigned numEquipe;
+    unsigned points ;
+};
 
-string litUneString (){
-    string uneChaine;
-    while (true){
-        getline (cin, uneChaine);
-        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
+vector<vector<joueur>> participant(const string & chemin){
+    ifstream ifs (chemin);
+    string nom;
+    string prenom;
+    string numEquipeStr;
+    unsigned point = 0;
+    vector<vector<joueur>> equipes (19);
+    for(int i = 0; i < 116; ++i){
+        getline (ifs, nom);
+        cout << nom << endl;
+        getline (ifs, prenom);
+        cout << prenom << endl;
+        getline(ifs, numEquipeStr);
+        cout << numEquipeStr << endl;
+        unsigned numEquipe = stoi(numEquipeStr);
+        equipes[numEquipe-1].push_back(joueur {nom, prenom, numEquipe, point});
     }
-    return uneChaine;
-}
-
-int litUnEntier (){
-    string uneChaine;
-    while (true){
-        getline (cin, uneChaine);
-        if ((!cin) || (uneChaine.substr(0,2) != "//")) break;
-    }
-    return stoi(uneChaine);
+    cout << "---------------------" << endl;
+    return equipes;
 }
 
 
@@ -44,8 +59,8 @@ string pileOuFace (const vector<string> & player1, const vector<string> & player
     return player2[0];
 }
 
-// ------------ shifoumi -----------
-string shifoumi(const vector<string> & player1, const vector<string> & player2) {
+// ------------ shifumi -----------
+string shifumi(const vector<string> & player1, const vector<string> & player2) {
     //0 pour Pierre, 1 pour Papier, 2 pour Ciseaux
     for (size_t i = 1; i < player1.size(); i = i + 1) {
         if (player1[i] == player2[i]) {
@@ -82,7 +97,7 @@ string justePrix(const vector<string> & player1, const vector<string> & player2)
     }
     return "erreur";
 }
-
+/*
 string jeuDuCailloux (const vector<string> & player1, const vector<string> & player2)
 {
     int count (0) ;
@@ -101,32 +116,32 @@ string jeuDuCailloux (const vector<string> & player1, const vector<string> & pla
         }
         if ((player1[count+1] == player2[count+1] && (count % 2) == 0) ) // 2 doit deviner, a raison, donc prend le nombre que 1 a caché
         {
-            result2 += std::stoi(player1[count+1]) ;
-            result1 -= std::stoi(player1[count+1]) ;
+            result2 += stoi(player1[count+1]) ;
+            result1 -= stoi(player1[count+1]) ;
             cout << player2[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl << endl ;
             count += 1 ;
         }
         else if(player1[count+1] != player2[count+1] && (count % 2) == 1) // 1 doit deviner, a tord, donc 2 prend le nombre que 2 a caché
         {
-            result2 += std::stoi(player2[count+1]) ;
-            result1 -= std::stoi(player2[count+1]) ;
+            result2 += stoi(player2[count+1]) ;
+            result1 -= stoi(player2[count+1]) ;
             cout << player2[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl << endl ;
             count += 1 ;
         }
         else if ((player1[count+1] == player2[count+1] && (count % 2) == 1) ) // 1 doit deviner, a raison, donc prend le nombre que 2 a caché
         {
-            result2 -= std::stoi(player2[count+1]) ;
-            result1 += std::stoi(player2[count+1]) ;
+            result2 -= stoi(player2[count+1]) ;
+            result1 += stoi(player2[count+1]) ;
             cout << player1[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl << endl ;
             count += 1 ;
         }
         else // 2 doit deviner, a tord,  1 donc prend le nombre que 1 a caché
         {
-            result2 -= std::stoi(player1[count+1]) ;
-            result1 += std::stoi(player1[count+1]) ;
+            result2 -= stoi(player1[count+1]) ;
+            result1 += stoi(player1[count+1]) ;
             count += 1 ;
             cout << player1[0] << " gagne la manche" << endl ;
             cout << result1 << endl << result2 << endl << endl ;
@@ -138,7 +153,7 @@ string jeuDuCailloux (const vector<string> & player1, const vector<string> & pla
         }
     }
     return winner ;
-}
+}*/
 
 
 // -----------------------------------------------------------------------------
@@ -146,12 +161,7 @@ string jeuDuCailloux (const vector<string> & player1, const vector<string> & pla
 // -----------------------------------------------------------------------------
 
 
-struct joueur {
-    string nom;
-    string prenom;
-    unsigned numEquipe;
-    unsigned points;
-};
+
 
 void affichTabJoueur (const vector<vector<joueur>> & vJ){
     //    for (const auto & equipe  : vector<vector<joueur>>){
@@ -176,33 +186,25 @@ size_t equipeGagnante (const vector<vector<joueur>> & vJoueur, const size_t & po
 // ------------ tournoiSansLoserBracket -----------
 size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur){
     if (vJoueur.size() > 16) vJoueur.resize(16);
-    //cout << vJoueur[0][0].numEquipe << endl;
     while (vJoueur.size()> 1){
-        //cout << "on débute le round "  << endl;
-        //cout << "on a " << vJoueur.size() << " participants" << endl;
+        cout << "on débute le round "  << endl;
+        cout << "on a " << vJoueur.size() << " participants" << endl;
         vector<vector<joueur>> prochainRoundVJouer;
 
-        /*for (size_t i (0); i < vJoueur.size(); i+=2){
-            prochainRoundVJouer.push_back(
-                vJoueur[
-                    equipeGagnante(vJoueur, i , i+1)]);
-        }*/
         for (size_t i (0); i < vJoueur.size(); i += 2) {
             size_t equipeGagnanteIndex = equipeGagnante(vJoueur, i, i + 1);
             vJoueur[equipeGagnanteIndex][0].points++;
             prochainRoundVJouer.push_back(vJoueur[equipeGagnanteIndex]);
         }
         vJoueur = prochainRoundVJouer;
-        //   cout << "plop1 " << endl;
     }
-    //cout << "plop2" << endl;
     cout << "c'est l'equipe " << vJoueur[0][0].numEquipe << " qui a gagne avec " << vJoueur[0][0].points << " points." << endl;
     return size_t(vJoueur[0][0].numEquipe);
 }
 
 
 // ------------ tournoiAvecLoserBracket -----------
-size_t tournoiDoubleElimination(vector<vector<joueur>> & vJoueur) {
+size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
     if (vJoueur.size() > 16) vJoueur.resize(16);
     vector<vector<joueur>> loserBracket;
     while (vJoueur.size() > 1 || loserBracket.size() > 1) {
@@ -230,6 +232,7 @@ size_t tournoiDoubleElimination(vector<vector<joueur>> & vJoueur) {
 }
 
 
+
 // ------------ tournoiLigue1 -----------
 size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
     if (vJoueur.size() > 16) vJoueur.resize(16);
@@ -247,17 +250,8 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
 
 int main()
 {
-    //cout << "Hello World!" << endl;
-    vector<vector<joueur>> vJoueur (19);
-
-    for (unsigned i (0); i < 114; ++i){
-        string nom (litUneString());
-        string prenom  (litUneString());
-        unsigned numEquipe (litUnEntier());
-        //cout << nom << endl << prenom << endl << numEquipe << endl;
-        vJoueur[numEquipe-1].push_back(joueur {nom, prenom, numEquipe});
-    }
-    // affichTabJoueur (vJoueur);
-    tournoiSansLoserBracket (vJoueur);
+    string chemin = "C:\\Users\\colin\\Desktop\\sae101\\extrairedonnee\\liste_etud_avec_com.txt";
+    vector<vector<joueur>> equipes = participant(chemin);
+    /* tournoiSansLoserBracket (equipes); */
     return 0;
 }
