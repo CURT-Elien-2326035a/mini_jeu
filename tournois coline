@@ -68,6 +68,7 @@ int recuperationGraine (const string & chemin){
 // ------------ pileOuFace -----------
 unsigned pileOuFace(const unsigned & j1, const unsigned j2) {
     //Affronte deux equipes au pile ou face
+    //0 pour pile et 1 pour face
     int resultat = rand() % 2;
     if (resultat == 0) {
         cout << "Le gagant de la manche est l'equipe " << j1 << endl;
@@ -84,7 +85,6 @@ unsigned shifumi(const unsigned & j1, const unsigned j2) {
     //0 pour Pierre, 1 pour Papier, 2 pour Ciseaux
     string coupj1 = to_string(rand() % 2);
     string coupj2 = "2";
-    cout << coupj1 << coupj2;
     while (true){
         if ((coupj1 == "0" && coupj2 == "2") || (coupj1 == "1" && coupj2 == "0") || (coupj1 == "2" && coupj2 == "1")) {
             cout << "Le gagant de la manche est l'equipe " << j1 << endl;
@@ -98,26 +98,43 @@ unsigned shifumi(const unsigned & j1, const unsigned j2) {
 }
 
 // ------------ justePrix -----------
-string justePrix(const vector<string> & player1, const vector<string> & player2) {
-    //Affronte deux equipes au juste prix
-    string nombreSecret = "67";
-    for (size_t i = 1; i < player1.size(); i = i + 1) {
-        if (player1[i] > nombreSecret) {
-            cout <<  player1[0] << " votre nombre est trop grand." << endl;
+unsigned justePrix(const unsigned & j1, const unsigned & j2){
+    int nbSecret = rand() % 10;
+    cout << "Le nombre secret est " << nbSecret << endl;
+    bool j1Turn = true;
+    int limiteMin = 0;
+    int limiteMax = 10;
+    int coupJ;
+    while(true){
+        coupJ = rand() % (limiteMax - limiteMin) + limiteMin;
+        if(j1Turn){
+            cout << "L'equipe 1 pense au nombre "<< coupJ << endl;
+            if(coupJ == nbSecret){
+                cout << "Le gagant de la manche est l'equipe " << j1 << endl;
+                return j1;
+            }else if(coupJ > nbSecret){
+                //cout << coupJ << " trop grand j1" << endl;
+                limiteMax = coupJ - 1;
+            }else{
+                limiteMin = coupJ + 1;
+                //cout << coupJ << " trop petit j1" << endl;
+            }
+            j1Turn = false;
+        }else{
+            cout << "L'equipe 2 pense au nombre "<< coupJ << endl;
+            if(coupJ == nbSecret){
+                cout << "Le gagant de la manche est l'equipe " << j2 << endl;
+                return j2;
+            }else if(coupJ > nbSecret){
+                // << coupJ << " trop grand j2" << endl;
+                limiteMax = coupJ - 1;
+            }else{
+                limiteMin = coupJ + 1;
+                //cout << coupJ << " trop petit j2" << endl;
+            }
+            j1Turn = true;
         }
-        else if (player1[i] < nombreSecret) {
-            cout <<  player1[0] << " votre nombre est trop petit." << endl;
-        }
-        if (player2[i] > nombreSecret) {
-            cout << player2[0] << " votre nombre est trop grand." << endl;
-        }
-        else if (player2[i] < nombreSecret) {
-            cout << player2[0] << " votre nombre est trop petit." << endl;
-        }
-        if (player1[i] == nombreSecret) return player1[0];
-        if (player2[i] == nombreSecret) return player2[0];
     }
-    return "erreur";
 }
 
 string jeuDuCailloux (const vector<string> & player1, const vector<string> & player2){
