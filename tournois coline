@@ -22,6 +22,7 @@ struct joueur {
 };
 
 vector<vector<joueur>> saisirEquipe (const string & chemin){
+    // Recupere les joueurs de chaques equipes a partir d'un fichier passe en parametre
     ifstream ifs (chemin);
     string nom;
     string prenom;
@@ -65,34 +66,40 @@ int recuperationGraine (const string & chemin){
 
 
 // ------------ pileOuFace -----------
-string pileOuFace() {
+unsigned pileOuFace(const unsigned & j1, const unsigned j2) {
+    //Affronte deux equipes au pile ou face
     int resultat = rand() % 2;
     if (resultat == 0) {
-        return "1";
+        cout << "Le gagant de la manche est l'equipe " << j1 << endl;
+        return j1;
     }
-    return "2";
+    cout << "Le gagant de la manche est l'equipe " << j2 << endl;
+    return j2;
 }
 
 
 // ------------ shifumi -----------
-string shifumi(const vector<string> & player1, const vector<string> & player2) {
+unsigned shifumi(const unsigned & j1, const unsigned j2) {
+    //Affronte deux equipes au shifumi
     //0 pour Pierre, 1 pour Papier, 2 pour Ciseaux
-    for (size_t i = 1; i < player1.size(); i = i + 1) {
-        if (player1[i] == player2[i]) {
-            cout << "Egalite !" << endl;
-        }
-        else if ((player1[i] == "0" && player2[i] == "2") || (player1[i] == "1" && player2[i] == "0") || (player1[i] == "2" && player2[i] == "1")) {
-            return player1[0];
+    string coupj1 = to_string(rand() % 2);
+    string coupj2 = "2";
+    cout << coupj1 << coupj2;
+    while (true){
+        if ((coupj1 == "0" && coupj2 == "2") || (coupj1 == "1" && coupj2 == "0") || (coupj1 == "2" && coupj2 == "1")) {
+            cout << "Le gagant de la manche est l'equipe " << j1 << endl;
+            return j1;
         }
         else {
-            return player2[0];
+            cout << "Le gagant de la manche est l'equipe " << j2 << endl;
+            return j2;
         }
     }
-    return "aucun gagant";
 }
 
 // ------------ justePrix -----------
 string justePrix(const vector<string> & player1, const vector<string> & player2) {
+    //Affronte deux equipes au juste prix
     string nombreSecret = "67";
     for (size_t i = 1; i < player1.size(); i = i + 1) {
         if (player1[i] > nombreSecret) {
@@ -113,8 +120,8 @@ string justePrix(const vector<string> & player1, const vector<string> & player2)
     return "erreur";
 }
 
-string jeuDuCailloux (const vector<string> & player1, const vector<string> & player2)
-{
+string jeuDuCailloux (const vector<string> & player1, const vector<string> & player2){
+    //Affronte deux equipes au jeu du cailloux
     int count (0) ;
     int result1 (3) ;
     int result2 (3) ;
@@ -196,19 +203,21 @@ size_t equipeGagnante(const vector<vector<joueur>> & vJoueur, const size_t & pos
 // ------------ tournoiSansLoserBracket -----------
 size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur, int & graine){
     if (vJoueur.size() > 16) vJoueur.resize(16);
+    cout << endl << "Les equipes vont s'affronter dans un tournoi sans loser bracket." << endl << endl ;
     while (vJoueur.size()> 1){
-        cout << "on debute le round "  << endl;
-        cout << "on a " << vJoueur.size() << " participants" << endl;
+        cout << "Debut du round "  << endl;
+        cout << "Il y a " << vJoueur.size() << " participants" << endl;
         vector<vector<joueur>> prochainRoundVJouer;
 
         for (size_t i (0); i < vJoueur.size(); i += 2) {
-            string gagnant = pileOuFace();
-            size_t equipeGagnanteIndex = (gagnant == "1") ? i : i + 1;
+            cout << "Les equipes " <<  vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent sur le pile ou face." << endl;
+            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe,vJoueur[i+1][0].numEquipe);
+            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
             prochainRoundVJouer.push_back(vJoueur[equipeGagnanteIndex]);
         }
         vJoueur = prochainRoundVJouer;
     }
-    cout << "c'est l'equipe " << vJoueur[0][0].numEquipe << " qui a gagne." << endl;
+    cout << endl << "c'est l'equipe " << vJoueur[0][0].numEquipe << " qui a gagne." << endl;
     return size_t(vJoueur[0][0].numEquipe);
 }
 
@@ -246,14 +255,33 @@ size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
 // ------------ tournoiLigue1 -----------
 size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
     if (vJoueur.size() > 16) vJoueur.resize(16);
+    //Manche pile ou face
     for (size_t i = 0; i < vJoueur.size(); i=i+1) {
-        for (size_t j = i + 1; j < vJoueur.size(); j=j+1) {
+        for (size_t j = i+1; j < vJoueur.size(); j=j+1) {
+            cout << "Les equipes " <<  vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent sur le pile ou face." << endl;
+            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
+            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
+            vJoueur[equipeGagnanteIndex][0].points++;
+        }
+    }
+    /*
+    //Manche shifumi
+    for (size_t i = 5; i < 10; i=i+1) {
+        for (size_t j = i+1; j < vJoueur.size(); j=j+1) {
             string gagnant = pileOuFace();
             size_t equipeGagnanteIndex = (gagnant == "1") ? i : j;
             vJoueur[equipeGagnanteIndex][0].points++;
         }
+    }*/
+/*
+    for (size_t i = 0; i < vJoueur.size(); i=i+1) {
+        for (size_t j = 0; j < vJoueur.size(); j=j+1) {
+            string gagnant = pileOuFace();
+            size_t equipeGagnanteIndex = (gagnant == "1") ? j : j+1;
+            vJoueur[equipeGagnanteIndex][0].points++;
+        }
     }
-
+*/
     size_t equipeGagnanteIndex = 0;
     unsigned maxPoints = 0;
     for (size_t i = 0; i < vJoueur.size(); ++i) {
@@ -279,8 +307,8 @@ int main(){
     int graine = recuperationGraine(chemin);
     srand(graine);
     //tournoiSansLoserBracket(equipes,graine);
-
-    tournoiLigue1 (equipes);
+    shifumi(1,2);
+    //tournoiLigue1 (equipes);
     //affichTabJoueur(equipes);
     return 0;
 }
