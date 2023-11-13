@@ -449,15 +449,9 @@ size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
 
 // ------------ tournoiSuisse -----------
 size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
-  // Redimensionne le tableau de joueurs pour avoir une puissance de 2
-    size_t newSize = 1;
-    while (newSize < vJoueur.size()) {
-        newSize *= 2;
-    }
-    vJoueur.resize(newSize);
 
     // Boucle pour chaque tour du tournoi suisse
-    for (size_t tour = 0; tour < log2(newSize); ++tour) {
+    for (size_t tour = 0; tour <4 ; ++tour) {
         cout << "Début du tour " << tour + 1 << endl;
 
         // Boucle pour chaque paire d'équipes
@@ -558,7 +552,7 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
 
 
 int main(){
-    string chemin = "C:\Users\zeust\Downloads\nom joueur";
+    string chemin = "...";
     vector<vector<joueur>> equipes = saisirEquipe(chemin);
     vector<int> Tournoi_Graine = recuperationGraineEtTournoi(chemin);
 
