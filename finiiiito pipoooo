@@ -10,7 +10,6 @@
 #include <ctime>
 
 
-
 using namespace std;
 
 
@@ -447,74 +446,83 @@ size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur){
 
 // ------------ tournoiAvecLoserBracket -----------
 size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur){
-    //Affronte 16 équipes dans un format de tournoi avec loser bracket
-    //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qu'y s'affrontent
+    // Affronte 16 équipes dans un format de tournoi avec loser bracket
+    // Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qui s'affrontent
     if (vJoueur.size() > 16) vJoueur.resize(8);
 
     cout << endl << "Les equipes vont s'affronter dans un tournoi avec loser bracket." << endl ;
-    vector<vector<joueur>> A;
+    vector<vector<joueur>> loserBracket;
 
+    //La boucle s'arrete quand il ne reste qu'un joueur dans VJoueur
     while (vJoueur.size() > 1) {
         vector<vector<joueur>> nouveauRoundLoser;
-        vector<vector<joueur>> nouveauRoundWinner;
+        vector<vector<joueur>> winnerBracket;
 
+        //Cette boucle permet de confronter les equipes 2 a 2.
         for(size_t i = 0; i < vJoueur.size(); i = i + 2){
+            //Les deux équipes s'affrontent sur les 5 jeux.
             duel(vJoueur,i,i+1);
 
-            //On rajoute a la fin du vector winnerBracket le gagnant du round.
+            // On rajoute à la fin du vector winnerBracket le gagnant du round.
             size_t equipeGagnanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i : i + 1;
-            nouveauRoundWinner.push_back(vJoueur[equipeGagnanteIndex]);
-            cout << "WinnerB gagant : " << vJoueur[equipeGagnanteIndex][0].numEquipe << endl;
+            winnerBracket.push_back(vJoueur[equipeGagnanteIndex]);
+            cout << "WinnerB gagnant : " << vJoueur[equipeGagnanteIndex][0].numEquipe << endl;
 
-            //On rajoute a la fin du vector loserBracket le perdant du round.
+            // On rajoute à la fin du vector loserBracket le perdant du round.
             size_t equipePerdanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i + 1 : i ;
-            A.push_back(vJoueur[equipePerdanteIndex]) ;
-            cout << "A perdant : " << vJoueur[equipePerdanteIndex][0].numEquipe << endl;
+            loserBracket.push_back(vJoueur[equipePerdanteIndex]) ;
+            cout << "LoserB perdant : " << vJoueur[equipePerdanteIndex][0].numEquipe << endl;
+
+            //Initialisation des points à 0.
             vJoueur[i][0].points = 0;
             vJoueur[i+1][0].points = 0;
         }
 
-        for(size_t i = 0; i < A.size(); i = i + 2){
-            duel(A,i,i+1);
-            size_t equipeGagnanteIndex = (A[i][0].points > A[i+1][0].points) ? i : i + 1;
-            nouveauRoundLoser.push_back(A[equipeGagnanteIndex]);
-            cout << "LoserB gagant : " << A[equipeGagnanteIndex][0].numEquipe << endl;
-            A[equipeGagnanteIndex][0].points = 0;
+        // Confronte les équipes du loser bracket
+        for(size_t i = 0; i < loserBracket.size(); i = i + 2){
+            duel(loserBracket,i,i+1);
+            size_t equipeGagnanteIndex = (loserBracket[i][0].points > loserBracket[i+1][0].points) ? i : i + 1;
+            nouveauRoundLoser.push_back(loserBracket[equipeGagnanteIndex]);
+            cout << "LoserB gagnant : " << loserBracket[equipeGagnanteIndex][0].numEquipe << endl;
+            loserBracket[equipeGagnanteIndex][0].points = 0;
         }
 
-        vJoueur = nouveauRoundWinner;
-        A = nouveauRoundLoser;
+        vJoueur = winnerBracket;
+        loserBracket = nouveauRoundLoser;
     }
-    cout << "fin premier while";
-    while(A.size() > 1){
+
+    while(loserBracket.size() > 1){
         vector<vector<joueur>> nouveauRound;
-        for(size_t i = 0; i < A.size(); i = i + 2){
-            duel(A,i,i+1);
-            size_t equipeGagnanteIndex = (A[i][0].points > A[i+1][0].points) ? i : i + 1;
-            nouveauRound.push_back(A[equipeGagnanteIndex]);
-            cout << "LoserB gagant : " << A[equipeGagnanteIndex][0].numEquipe << endl;
+        for(size_t i = 0; i < loserBracket.size(); i = i + 2){
+            duel(loserBracket,i,i+1);
+            size_t equipeGagnanteIndex = (loserBracket[i][0].points > loserBracket[i+1][0].points) ? i : i + 1;
+            nouveauRound.push_back(loserBracket[equipeGagnanteIndex]);
+            cout << "LoserB gagnant : " << loserBracket[equipeGagnanteIndex][0].numEquipe << endl;
         }
-        A = nouveauRound;
+        loserBracket = nouveauRound;
     }
 
-    // On rassemble les deux finalist
+    // On rassemble les deux finalistes
     vector<vector<joueur>> final;
     final.push_back(vJoueur[0]);
-    final.push_back(A[0]);
+    final.push_back(loserBracket[0]);
     final[0][0].points = 0;
     final[1][0].points = 0;
 
+    //Les deux finalistes s'affrontent, dans les règles,
+    //l'equipe du loser bracket doit gaganer deux fois pour remporter le final.
     duel(final, 0, 1);
     size_t equipeGagnanteIndex = (final[0][0].points > final[1][0].points) ? 0 : 1;
+    // Si l'equipe issus du winnerBracket s'arrête, il a gagné, le programme s'arrete.
     if (equipeGagnanteIndex == 0)
     {
-        cout << "c'est l'equipe " << final[0][0].numEquipe << " qui gagne." << endl;
+        cout << "C'est l'equipe " << final[0][0].numEquipe << " qui gagne." << endl;
         return size_t(final[0][0].numEquipe);
     }
-
+    //Sinon on rejout une manche et le gagant de cette derniere remporte le tournoi
     duel(final, 0, 1);
     equipeGagnanteIndex = (final[0][0].points > final[1][0].points) ? 0 : 1;
-    cout << "c'est l'equipe " << final[equipeGagnanteIndex][0].numEquipe << " qui gagne." << endl;
+    cout << "C'est l'equipe " << final[equipeGagnanteIndex][0].numEquipe << " qui gagne." << endl;
     return size_t(final[equipeGagnanteIndex][0].numEquipe);
 }
 
@@ -524,10 +532,8 @@ size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur){
 size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
     //Affronte 16 équipes dans un format de tournoi ligue1
     cout << endl << "Les equipes vont s'affronter dans un tournoi ligue 1."  ;
-
     //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qui s'affrontent
     if (vJoueur.size() > 16) vJoueur.resize(16);
-
     // Grace a la double boucle, chaque equipe va affronter toutes les autres equipes
     for (size_t i = 0; i < vJoueur.size(); i=i+1) {
         /*
@@ -540,7 +546,6 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
             duel(vJoueur,i,j);
         }
     }
-
     // Trouve et stock l'equipe gagnante dans une variable.
     size_t equipeGagnanteIndex = 0;
     unsigned maxPoints = 0;
@@ -550,13 +555,11 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
             equipeGagnanteIndex = i;
         }
     }
-
     /*
     //Affiche les points de chaque équipe
     for (size_t i = 0; i < vJoueur.size(); i=i+1) {
         cout << "C'est l'equipe " << vJoueur[i][0].numEquipe << " qui a gagne avec " << vJoueur[i][0].points << " points." << endl;
     }*/
-
     cout << endl << "C'est l'equipe " << vJoueur[equipeGagnanteIndex][0].numEquipe << " qui a gagne avec " << vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
     return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
 }
@@ -599,7 +602,6 @@ size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
         vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
     return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
 }
-
 
 
 
