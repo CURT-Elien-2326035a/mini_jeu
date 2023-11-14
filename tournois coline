@@ -223,55 +223,57 @@ unsigned jeuDuCailloux (const unsigned & j1, const unsigned & j2){
 }
 
 
-// ------------ morpion -----------
-vector<vector<string>> grid{{" ", " ", " "},{" ", " ", " "},{" ", " ", " "}};
+// ------------ Morpion ! -----------
 
-//Affiche la grille
+//Affiche la grille (seulement pour debug)
 void showGrid(const vector<vector<string>> & grid){
+    // Double boucle qui affiche chaque case
     for(int line = 0; line < 3; line += 1){
         for(int column = 0; column < 3; column += 1){
-            //cout << grid[line][column];
+            cout << grid[line][column];
             if(column < 2){
-                //cout << "|";
+                cout << "|";
             }
         }
-        //cout << endl;
+        cout << endl;
         if(line < 2){
-            //cout << "------" << endl;
+            cout << "------" << endl;
         }
     }
     for(int i = 0; i < 4; i += 1){
-        //cout << endl;
+        cout << endl;
     }
 }
 
-//Place une le coup d'un joueur
+// Regarde si le coup demander est jouable
 bool isPlayable(const int & line, const int & column, vector<vector<string>> grid){
+    // Si l'emplacement est vide, alors le coup est jouable.
     if(grid[line][column] == " "){
         return true;
     }
+    // Sinon non.
     return false;
 }
 
-//Vérifie si un joueur gagne
+// Condition de victoire
 bool isWinner(const string & form, vector<vector<string>> grid){
-    //Check Line
+    // Condition de victoire en Line
     for(int line = 0; line < 3; line += 1){
         if(grid[line][0] == form && grid[line][1] == form && grid[line][2] == form){
             return true;
         }
     }
-    //Check Column
+    // Condition de victoire en Colonne
     for(int column = 0; column < 3; column += 1){
         if(grid[0][column] == form && grid[1][column] == form && grid[2][column] == form){
             return true;
         }
     }
-    //Check Diagonal
+    // Condition de victoire en Diagonal de droite à gauche
     if(grid[0][0] == form && grid[1][1] == form && grid[2][2] == form){
         return true;
     }
-    //Check OppositeDiagonal
+    // Condition de victoire en Diagonal de gauche à droite
     if(grid[0][2] == form && grid[1][1] == form && grid[2][0] == form){
         return true;
     }
@@ -279,10 +281,14 @@ bool isWinner(const string & form, vector<vector<string>> grid){
     return false;
 }
 
-// Selectionne un emplacement et renvoit un tableau a deux entrées.
+// Selectionne un emplacement à partir d'un nombre
+//qui renvoie les coordonnées de la case.
 vector<int> select_emp(int x){
+    // Initialisation des variables
     vector<int> result{0,0};
+    // Variable permettant de stop la double boucle lorsque le nombre demander est obtenu.
     int count = 0;
+    // Double boucle qui cherche l'emplacement avec "i" pour la ligne et "j" pour la colonne.
     for(int i = 0; i < 3; i += 1){
         for(int j = 0; j < 3; j += 1){
             if(count == x){
@@ -290,6 +296,7 @@ vector<int> select_emp(int x){
                 result[1] = j;
                 return result;
             }
+            // Incrémentation du compteur. (Important)
             count += 1;
         }
     }
@@ -298,23 +305,36 @@ vector<int> select_emp(int x){
 
 //Fonction principal du morpion
 unsigned morpion (const unsigned & j1, const unsigned & j2){
+    // Initialisation de la grille de jeu
+    vector<vector<string>> grid{{" ", " ", " "},{" ", " ", " "},{" ", " ", " "}};
+    // Initialisation des autres variables.
+    // compteur de coup jouez
     int count = 0;
+    // Case séléctionné par le joueur
     int selection = 0;
+    // Numéro de ligne de la dernière case séléctionné.
     int line = 0;
+    // Numéro de colonne de la dernière case séléctionné.
     int column = 0;
+    // Savoir s'il s'agit du tour du joueur 1 ou non.
     bool isJ1Turn = true;
+    // La forme actuellement en train de joueur (soit 'X' soit 'O')
     string form;
     while(true){
+        // S'il s'agit du joueur 1 alors lui affecter le signe 'X' sinon 'O'
         if(isJ1Turn){
             form = "X";
         }else{
             form = "O";
         }
+        // Sélection d'une case random
         selection = rand() % 9;
+        // Coordonner de la case stocker dans les variables "line" et "column"
         line = select_emp(selection)[0];
         column = select_emp(selection)[1];
-        //cout << selection << endl;
+        // Vérification pour savoir si la case est déjà occupé.
         if(isPlayable(line, column, grid)){
+            // La coup est jouable, alors, on passe au joueur suivant et on place la forme actuelle
             if(isJ1Turn){
                 isJ1Turn = false;
             }else{
@@ -324,23 +344,29 @@ unsigned morpion (const unsigned & j1, const unsigned & j2){
             grid[line][column] = form;
             //cout << form << " place à " << selection << endl;
         }
-        showGrid(grid);
+        // debug
+        //showGrid(grid);
+        // Verification des conditions de victoire.
         if(isWinner(form, grid)){
+            // Condition vrai, alors, Vérification de la forme actuelle
             if(form == "X"){
+                // Si la forme est 'X' alors le joueur 1 gagne.
                 //cout << "Le gagant de la manche est l'equipe " << j1 << endl;
                 return j1;
             }else{
+                // Si la forme est 'O' alors le joueur 2 gagne.
                 //cout << "Le gagant de la manche est l'equipe " << j2 << endl;
                 return j2;
             }
         }
+        // Si le nombre de coup joué est égal à 9, alors il n'y a plus de place sur le plateau.
         if(count == 9){
+            // un match nul est déclarer, par défaut le joueur 1 gagne.
             //cout << "Match nul" << endl;
             return j1;
         }
     }
 }
-
 
 // -----------------------------------------------------------------------------
 // ----------------------- Tournoi -----------------------
