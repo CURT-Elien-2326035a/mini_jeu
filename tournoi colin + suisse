@@ -346,68 +346,63 @@ unsigned morpion (const unsigned & j1, const unsigned & j2){
 // ----------------------- Tournoi -----------------------
 // -----------------------------------------------------------------------------
 
-/*
-void affichTabJoueur (const vector<vector<joueur>> & vJ){
-    //    for (const auto & equipe  : vector<vector<joueur>>){
-    for (size_t i (0); i < vJ.size(); ++i) {
-        //cout << "numero equipe : " << i+1 << endl;
-        for (const auto & _joueur  : vJ[i])
-            //cout << _joueur.nom << " " << _joueur.prenom << endl;
-    }
-}
-*/
 
-size_t equipeGagnante(const vector<vector<joueur>> & vJoueur, const size_t & posEquipe1, const size_t & posEquipe2) {
-    return posEquipe1; //(vJoueur[posEquipe1][0].points > vJoueur[posEquipe2][0].points) ? posEquipe1 : posEquipe2;
-}
+void duel (vector<vector<joueur>> & vJoueur, const int & i, const int & j){
+    // Fait s'affronter 2 joueurs entre eux sur les 5 jeux.
 
+    unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[j][0].numEquipe);
+    // On recupere l'indice du gagnant,
+    // Si gagant vaut vJoueur[i][0].numEquipe alors equipeGagnanteIndex sera egal a i.
+    // Sinon equipeGagnanteIndex vaut i+1
+    size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
+    // Les points du gagant augmentent de 1
+    vJoueur[equipeGagnanteIndex][0].points++;
+
+    gagnant = shifumi(vJoueur[i][0].numEquipe, vJoueur[j][0].numEquipe);
+    equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
+    vJoueur[equipeGagnanteIndex][0].points++;
+
+    gagnant = justePrix(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
+    equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
+    vJoueur[equipeGagnanteIndex][0].points++;
+
+    gagnant = jeuDuCailloux(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
+    equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
+    vJoueur[equipeGagnanteIndex][0].points++;
+
+
+    gagnant = morpion(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
+    equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
+    vJoueur[equipeGagnanteIndex][0].points++;
+}
 
 
 // ------------ tournoiSansLoserBracket -----------
 size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur){
     //Affronte 16 équipes dans un format de tournoi sans loser bracket
     //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qu'y s'affrontent
+
     if (vJoueur.size() > 16) vJoueur.resize(16);
     cout << endl << "Les equipes vont s'affronter dans un tournoi sans loser bracket."  ;
 
     while (vJoueur.size() > 1){ //La boucle s'arrete quand il ne reste qu'un joueur dans VJoueur
         //cout << endl << endl << "Debut du round "  << endl;
         //cout << "Il y a " << vJoueur.size() << " participants" << endl;
+
         //Création d'un vector de vector de joueur qui va stocker les gagnants pour le prochain tour.
         vector<vector<joueur>> prochainRoundVJouer;
+
         //Cette boucle permet de confronter les equipes 2 a 2.
         for (size_t i (0); i < vJoueur.size(); i += 2) {
             //cout << endl <<"Les equipes " <<  vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent." << endl;
 
-            // Le gagnant de chaque jeu est stocké dans la variable gagnant.
-            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            // On recupere l'indice du gagnant,
-            // Si gagant vaut vJoueur[i][0].numEquipe alors equipeGagnanteIndex sera egal a i.
-            // Sinon equipeGagnanteIndex vaut i+1
-            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            // Les points du gagant augmentent de 1
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = shifumi(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = justePrix(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = jeuDuCailloux(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-
-            gagnant = morpion(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
+            // 2 équipes s'affrontent entre elles
+            duel(vJoueur,i, i+1);
 
             //On rajoute a la fin du vector prochainRoundVJouer le gagnant afin qu'il puisse jouer le prochain round.
-            equipeGagnanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i : i + 1;
+            size_t equipeGagnanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i : i + 1;
             prochainRoundVJouer.push_back(vJoueur[equipeGagnanteIndex]);
+
             // On remet les scores a 0.
             vJoueur[i][0].points = 0;
             vJoueur[i+1][0].points = 0;
@@ -420,75 +415,66 @@ size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur){
 
 
 // ------------ tournoiAvecLoserBracket -----------
-size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
+size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur){
     //Affronte 16 équipes dans un format de tournoi avec loser bracket
     //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qu'y s'affrontent
-    if (vJoueur.size() > 16) vJoueur.resize(16);
-    cout << endl << "Les equipes vont s'affronter dans un tournoi sans loser bracket."  ;
-    vector<vector<joueur>> loserBracket;
+    if (vJoueur.size() > 16) vJoueur.resize(8);
 
-    while (vJoueur.size() > 1){ //La boucle s'arrete quand il ne reste qu'un joueur dans VJoueur
-        //cout << endl << endl << "Debut du round "  << endl;
-        //cout << "Il y a " << vJoueur.size() << " participants" << endl;
-        //Création d'un vector de vector de joueur qui va stocker les gagnants pour le prochain tour.
-        vector<vector<joueur>> prochainRoundVJouer;
+    cout << endl << "Les equipes vont s'affronter dans un tournoi avec loser bracket."  ;
+    vector<vector<joueur>> A;
 
-        //Cette boucle permet de confronter les equipes 2 a 2.
-        for (size_t i (0); i < vJoueur.size(); i += 2) {
-            //cout << endl <<"Les equipes " <<  vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent." << endl;
+    while (vJoueur.size() > 1) {
+        vector<vector<joueur>> nouveauRoundLoser;
+        vector<vector<joueur>> nouveauRoundWinner;
 
-            // Le gagnant de chaque jeu est stocké dans la variable gagnant.
-            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            // On recupere l'indice du gagnant,
-            // Si gagant vaut vJoueur[i][0].numEquipe alors equipeGagnanteIndex sera egal a i.
-            // Sinon equipeGagnanteIndex vaut i+1
-            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            // Les points du gagant augmentent de 1
-            vJoueur[equipeGagnanteIndex][0].points++;
+        for(size_t i = 0; i < vJoueur.size(); i = i + 2){
+            duel(vJoueur,i,i+1);
 
-            gagnant = shifumi(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
+            //On rajoute a la fin du vector winnerBracket le gagnant du round.
+            size_t equipeGagnanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i : i + 1;
+            nouveauRoundWinner.push_back(vJoueur[equipeGagnanteIndex]);
+            cout << "WinnerB gagant : " << vJoueur[equipeGagnanteIndex][0].numEquipe << endl;
 
-            gagnant = justePrix(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = jeuDuCailloux(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-
-            gagnant = morpion(vJoueur[i][0].numEquipe, vJoueur[i+1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            //On rajoute a la fin du vector prochainRoundVJouer le gagnant afin qu'il puisse jouer le prochain round.
-            equipeGagnanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i : i + 1;
-            prochainRoundVJouer.push_back(vJoueur[equipeGagnanteIndex]);
-
+            //On rajoute a la fin du vector loserBracket le perdant du round.
             size_t equipePerdanteIndex = (vJoueur[i][0].points > vJoueur[i+1][0].points) ? i + 1 : i ;
-            loserBracket.push_back(vJoueur[equipePerdanteIndex]);
-
-
-            // On remet les scores a 0.
+            A.push_back(vJoueur[equipePerdanteIndex]) ;
+            cout << "A perdant : " << vJoueur[equipePerdanteIndex][0].numEquipe << endl;
             vJoueur[i][0].points = 0;
             vJoueur[i+1][0].points = 0;
         }
-        vJoueur = prochainRoundVJouer;
+
+        for(size_t i = 0; i < A.size(); i = i + 2){
+            duel(A,i,i+1);
+            size_t equipeGagnanteIndex = (A[i][0].points > A[i+1][0].points) ? i : i + 1;
+            nouveauRoundLoser.push_back(A[equipeGagnanteIndex]);
+            cout << "LoserB gagant : " << A[equipeGagnanteIndex][0].numEquipe << endl;
+            A[equipeGagnanteIndex][0].points = 0;
+        }
+
+        vJoueur = nouveauRoundWinner;
+        A = nouveauRoundLoser;
+    }
+    cout << "fin premier while";
+    while(A.size() > 1){
+        vector<vector<joueur>> nouveauRound;
+        for(size_t i = 0; i < A.size(); i = i + 2){
+            duel(A,i,i+1);
+            size_t equipeGagnanteIndex = (A[i][0].points > A[i+1][0].points) ? i : i + 1;
+            nouveauRound.push_back(A[equipeGagnanteIndex]);
+            cout << "LoserB gagant : " << A[equipeGagnanteIndex][0].numEquipe << endl;
+        }
+        A = nouveauRound;
     }
 
-    //loserbracket
-
+    // On rassemble les deux finalist
     vector<vector<joueur>> final;
     final.push_back(vJoueur[0]);
-    final.push_back(loserBracket[0]);
+    final.push_back(A[0]);
+    final[0][0].points = 0;
+    final[1][0].points = 0;
 
-
-    size_t equipeGagnanteIndex = equipeGagnante(final, 0, 1);
-    final[equipeGagnanteIndex][0].points++;
     cout << "c'est l'equipe " << final[0][0].numEquipe << " qui a gagne avec " << final[0][0].points << " points." << endl;
-    return size_t(final[0][0].numEquipe);
+    return 1;
 }
 
 
@@ -496,8 +482,9 @@ size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
 // ------------ tournoiLigue1 -----------
 size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
     //Affronte 16 équipes dans un format de tournoi ligue1
-    //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qui s'affrontent
     cout << endl << "Les equipes vont s'affronter dans un tournoi ligue 1."  ;
+
+    //Redimensionne le tableau de joueurs pour avoir seulement 16 équipes qui s'affrontent
     if (vJoueur.size() > 16) vJoueur.resize(16);
 
     // Grace a la double boucle, chaque equipe va affronter toutes les autres equipes
@@ -508,28 +495,12 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
          * - Une equipe s'affronte elle même.
         */
         for (size_t j = i+1; j < vJoueur.size(); j=j+1) {
-            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
-            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
-            vJoueur[equipeGagnanteIndex][0].points++;
 
-            gagnant = shifumi(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = justePrix(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = jeuDuCailloux(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = morpion(vJoueur[i][0].numEquipe,vJoueur[j][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : j;
-            vJoueur[equipeGagnanteIndex][0].points++;
+            duel(vJoueur,i,j);
         }
     }
 
+    // Trouve et stock l'equipe gagnante dans une variable.
     size_t equipeGagnanteIndex = 0;
     unsigned maxPoints = 0;
     for (size_t i = 0; i < vJoueur.size(); ++i) {
@@ -538,60 +509,41 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
             equipeGagnanteIndex = i;
         }
     }
+
     /*
+    //Affiche les points de chaque équipe
     for (size_t i = 0; i < vJoueur.size(); i=i+1) {
         //cout << "C'est l'equipe " << vJoueur[i][0].numEquipe << " qui a gagne avec " << vJoueur[i][0].points << " points." << endl;
     }*/
-    cout << endl << "C'est l'equipe " << vJoueur[equipeGagnanteIndex][0].numEquipe << " qui a gagne avec " << vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
 
+    cout << endl << "C'est l'equipe " << vJoueur[equipeGagnanteIndex][0].numEquipe << " qui a gagne avec " << vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
     return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
 }
+
 
 // ------------ tournoiSuisse -----------
 size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
     if (vJoueur.size() > 16) vJoueur.resize(16);
 
-    size_t nombreRounds = 4; // Utilisez log2 pour déterminer le nombre de rondes
+    size_t nombreRounds = 4;
 
     for (size_t ronde = 1; ronde <= nombreRounds; ++ronde) {
-        cout << "Ronde " << ronde << endl;
-        //vector<vector<joueur>> prochainRoundVJouer;
+        //cout << "Ronde " << ronde << endl;
 
-        // Triez les équipes en fonction des points avant chaque ronde
+        // Trie les équipes en fonction des points avant chaque ronde
         sort(vJoueur.begin(), vJoueur.end(), [](const auto &a, const auto &b) {
             return a[0].points > b[0].points;
         });
-
-        for (size_t i = 0; i < vJoueur.size(); i += 2) {
-            cout << "Les équipes " << vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent." << endl;
-
-                unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
-            size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = shifumi(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = justePrix(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = jeuDuCailloux(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-            gagnant = morpion(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
-            equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
-            vJoueur[equipeGagnanteIndex][0].points++;
-
-        }
+        /* Permet d'afficher les points de toutes les equipes
         for (size_t i = 0; i < vJoueur.size(); i=i+1) {
-            cout << "C'est l'equipe " << vJoueur[i][0].numEquipe << " qui a gagne avec " << vJoueur[i][0].points << " points." << endl;
+            //cout << "L'equipe " << vJoueur[i][0].numEquipe << " a " << vJoueur[i][0].points << " points." << endl;
+        }*/
+        for (size_t i = 0; i < vJoueur.size(); i += 2) {
+            //cout << "Les equipes " << vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent." << endl;
+            duel(vJoueur,i,i+1);
         }
     }
-
-    // Trouvez et imprimez l'équipe gagnante du tournoi suisse
+    // Trouve et stock l'equipe gagnante dans une variable.
     size_t equipeGagnanteIndex = 0;
     unsigned maxPoints = 0;
     for (size_t i = 0; i < vJoueur.size(); ++i) {
@@ -600,11 +552,9 @@ size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
             equipeGagnanteIndex = i;
         }
     }
-
-    cout << endl << "C'est l'équipe " << vJoueur[equipeGagnanteIndex][0].numEquipe
-         << " qui a gagné le tournoi suisse avec " << vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
-
-        return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
+    cout << endl << "C'est l'equipe " << vJoueur[equipeGagnanteIndex][0].numEquipe << " qui gagne le tournoi suisse avec " <<
+        vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
+    return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
 }
 
 
@@ -626,6 +576,6 @@ int main(){
     else if (Tournoi_Graine[0] == 3)
         tournoiSansLoserBracket(equipes);
     else
-        tournoiLigue1(equipes);
+        tournoiAvecLoserBracket(equipes);
     return 0;
 }
