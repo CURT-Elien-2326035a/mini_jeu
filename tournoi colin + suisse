@@ -420,7 +420,7 @@ size_t tournoiSansLoserBracket (vector<vector<joueur>> & vJoueur){
 
 // ------------ tournoiAvecLoserBracket -----------
 size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
-      if (vJoueur.size() > 16) vJoueur.resize(16);
+    if (vJoueur.size() > 16) vJoueur.resize(16);
     vector<vector<joueur>> loserBracket;
     while (vJoueur.size() > 1 || loserBracket.size() > 1) {
         vector<vector<joueur>> prochainRoundVJouer;
@@ -448,15 +448,26 @@ size_t tournoiAvecLoserBracket(vector<vector<joueur>> & vJoueur) {
 
 
 // ------------ tournoiSuisse -----------
+
+// ------------ tournoiSuisse -----------
 size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
+    if (vJoueur.size() > 16) vJoueur.resize(16);
 
-    // Boucle pour chaque tour du tournoi suisse
-    for (size_t tour = 0; tour <4 ; ++tour) {
-        cout << "Début du tour " << tour + 1 << endl;
+    size_t nombreRounds = 4; // Utilisez log2 pour déterminer le nombre de rondes
 
-        // Boucle pour chaque paire d'équipes
+    for (size_t ronde = 1; ronde <= nombreRounds; ++ronde) {
+        cout << "Ronde " << ronde << endl;
+        //vector<vector<joueur>> prochainRoundVJouer;
+
+        // Triez les équipes en fonction des points avant chaque ronde
+        sort(vJoueur.begin(), vJoueur.end(), [](const auto &a, const auto &b) {
+            return a[0].points > b[0].points;
+        });
+
         for (size_t i = 0; i < vJoueur.size(); i += 2) {
-            unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
+            cout << "Les équipes " << vJoueur[i][0].numEquipe << " et " << vJoueur[i+1][0].numEquipe << " s'affrontent." << endl;
+
+                unsigned gagnant = pileOuFace(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
             size_t equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
             vJoueur[equipeGagnanteIndex][0].points++;
 
@@ -475,10 +486,14 @@ size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
             gagnant = morpion(vJoueur[i][0].numEquipe, vJoueur[i + 1][0].numEquipe);
             equipeGagnanteIndex = (gagnant == vJoueur[i][0].numEquipe) ? i : i + 1;
             vJoueur[equipeGagnanteIndex][0].points++;
+
+            //prochainRoundVJouer.push_back(vJoueur[equipeGagnanteIndex]);
         }
+
+        //vJoueur = prochainRoundVJouer;
     }
 
-    // Trouver l'équipe gagnante
+    // Trouvez et imprimez l'équipe gagnante du tournoi suisse
     size_t equipeGagnanteIndex = 0;
     unsigned maxPoints = 0;
     for (size_t i = 0; i < vJoueur.size(); ++i) {
@@ -488,10 +503,12 @@ size_t tournoiSuisse(vector<vector<joueur>> & vJoueur) {
         }
     }
 
-    cout << "C'est l'équipe " << vJoueur[equipeGagnanteIndex][0].numEquipe << " qui a gagné avec " << vJoueur[equipeGagnanteIndex][0].points << " points!" << endl;
+    cout << endl << "C'est l'équipe " << vJoueur[equipeGagnanteIndex][0].numEquipe
+         << " qui a gagné le tournoi suisse avec " << vJoueur[equipeGagnanteIndex][0].points << " points." << endl;
 
-
+        return size_t(vJoueur[equipeGagnanteIndex][0].numEquipe);
 }
+
 
 // ------------ tournoiLigue1 -----------
 size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
@@ -552,14 +569,14 @@ size_t tournoiLigue1(vector<vector<joueur>> & vJoueur) {
 
 
 int main(){
-    string chemin = "...";
+    string chemin = "players.txt";
     vector<vector<joueur>> equipes = saisirEquipe(chemin);
     vector<int> Tournoi_Graine = recuperationGraineEtTournoi(chemin);
 
     //Initialiser l'aléatoire
     srand(Tournoi_Graine[4]);
 
-    
+
     //Lancement du bon tournoi
     if (Tournoi_Graine[0] == 1)
         tournoiLigue1(equipes);
@@ -573,4 +590,4 @@ int main(){
         tournoiLigue1(equipes);
 
     return 0;
-}   
+}
